@@ -3,10 +3,10 @@ import scanEmails
 
 def main():
     # Step 1: Receive Emails
-    emails = recieveEmails.fetch_emails()
+    flagged_emails = recieveEmails.receive_emails()
     
     # Step 2: Scan Emails for Threats
-    threats = scanEmails.scan_for_threats(emails)
+    threats = scanEmails.scan_for_threats(flagged_emails)
     
     # Output the results
     if threats:
