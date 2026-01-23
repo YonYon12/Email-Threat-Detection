@@ -2,17 +2,18 @@ import os
 import yara 
 
 try:
-    rules = yara.compile(filepath='myYaraRules.yar')
+    rules_files = {
+        'malware_rules': 'rules/malware_rules.yar',
+        'phishing_rules': 'rules/phishing_rules.yar'
+    }
+    rules = yara.compile(filepaths=rules_files)
+
 except yara.Error as e:
     print(f"Error compiling YARA rules: {e}")
     rules = None
 
 def scan_for_threats(emails):
     # TODO: Create defensive coding to prevent errors / crashes.
-
-    """
-    Scan a list of emails for malware threats.
-    """
 
     flaged_emails = []
 
@@ -27,11 +28,15 @@ def scan_for_threats(emails):
     return flaged_emails
     
 def scan_malware(email):
-    """
-    Scans email links and attachments for malicious payloads.
-    Returns True if a threat is detected, False otherwise.
-    """
-    # TODO: implement actual scanning logic for attatchements and links
+    
+    for file_path in email.get("attachments", []):
+        try:
+            matches = rules.match(filepath=file_path)
+            if matches:
+                return True
+        except Exception as e:
+            print(f"Error scanning file {file_path}: {e}")
+    
     raise False # Placeholder to indicate no threat detected
 
 def phishing_check(email):
